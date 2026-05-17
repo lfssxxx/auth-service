@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/lfssxxx/auth_service/internal/app"
 	"github.com/lfssxxx/auth_service/internal/config"
+	"github.com/lfssxxx/auth_service/internal/storage"
 )
 
 const (
@@ -17,13 +19,23 @@ const (
 )
 
 func main() {
-	cfg := config.MustLoad()
+	cfg, err := config.MustLoad()
+	if err != nil {
+		panic(err)
+	}
+
+	ctx, cancel := signal.NotifyContext(
+		context.Background(),
+		syscall.SIGINT, syscall.SIGTERM,
+	)
+	defer cancel()
 
 	log := setupLogger(cfg.Env)
 	log.Info("Application start")
 
+	pool, err := storage.NewPool(ctx, storage.NewConfigMust())
 	// TODO: App Init
-	application := app.New(log, cfg.GRPC.Port, cfg.StoragePath, cfg.TokenTTL)
+	application := app.New(log, cfg.Port, pool, cfg.TokenTTL)
 	go application.GRPCSrv.MustRun()
 
 	stop := make(chan os.Signal, 1)
