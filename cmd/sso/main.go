@@ -34,6 +34,10 @@ func main() {
 	log.Info("Application start")
 
 	pool, err := storage.NewPool(ctx, storage.NewConfigMust())
+	if err != nil {
+		log.Error("pgx pool was not created", "err", err)
+		os.Exit(1)
+	}
 	// TODO: App Init
 	application := app.New(log, cfg.Port, pool, cfg.TokenTTL)
 	go application.GRPCSrv.MustRun()

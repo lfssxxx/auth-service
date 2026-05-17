@@ -7,11 +7,11 @@ import (
 )
 
 type Config struct {
-	Host     string `env:"POSTGRES_HOST" env-required:"true"`
-	Port     string `env:"POSTGRES_PORT" env-default:"5432"`
-	User     string `env:"POSTGRES_USER" env-required:"true"`
-	Password string `env:"POSTGRES_PASSWORD" env-required:"true"`
-	Database string `env:"POSTGRES_DB" env-required:"true"`
+	Host     string `envconfig:"POSTGRES_HOST" required:"true"`
+	Port     string `envconfig:"POSTGRES_PORT" default:"5432"`
+	User     string `envconfig:"POSTGRES_USER" required:"true"`
+	Password string `envconfig:"POSTGRES_PASSWORD" required:"true"`
+	Database string `envconfig:"POSTGRES_DB" required:"true"`
 }
 
 func NewConfig() (Config, error) {
@@ -24,10 +24,10 @@ func NewConfig() (Config, error) {
 }
 
 func NewConfigMust() Config {
-	config, err := NewConfig()
+	cfg, err := NewConfig()
 	if err != nil {
 		err = fmt.Errorf("get postgres connection pool config: %w", err)
 		panic(err)
 	}
-	return config
+	return cfg
 }
