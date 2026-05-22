@@ -14,11 +14,11 @@ type Config struct {
 	Timeout  time.Duration `envconfig:"TIMEOUT"`
 }
 
-func MustLoad() (Config, error) {
+func Load() (*Config, error) {
 
 	var cfg Config
 	if err := envconfig.Process("", &cfg); err != nil {
-		return Config{}, fmt.Errorf("config load: %w", err)
+		return nil, fmt.Errorf("config load: %w", err)
 	}
-	return cfg, nil
+	return &cfg, nil
 }

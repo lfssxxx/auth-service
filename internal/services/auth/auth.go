@@ -119,7 +119,7 @@ func (a *Auth) RegisterNewUser(ctx context.Context, email string, password strin
 		if errors.Is(err, storage.ErrUserExists) {
 			log.Warn("user already exists", "err", err)
 
-			return 0, fmt.Errorf("%s: %w", op, err)
+			return 0, fmt.Errorf("%s: %w", op, storage.ErrUserExists)
 		}
 
 		log.Error("failed to sign up", "err", err)

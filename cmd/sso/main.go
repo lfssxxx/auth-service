@@ -19,16 +19,12 @@ const (
 )
 
 func main() {
-	cfg, err := config.MustLoad()
+	cfg, err := config.Load()
 	if err != nil {
 		panic(err)
 	}
 
-	ctx, cancel := signal.NotifyContext(
-		context.Background(),
-		syscall.SIGINT, syscall.SIGTERM,
-	)
-	defer cancel()
+	ctx := context.Background()
 
 	log := setupLogger(cfg.Env)
 	log.Info("Application start")
@@ -50,7 +46,6 @@ func main() {
 	application.GRPCSrv.Stop()
 
 	log.Info("application stopped")
-	// TODO: Start gRPC Server
 }
 
 func setupLogger(env string) *slog.Logger {
